@@ -7,7 +7,6 @@ class StarBattle():
         self.stars=starcount
         self.size=size
         self.cMet=cMet
-        self.strc=np.eye(self.size,dtype=int)
         if self.cMet=='random':
             self.randConstructor()
         else:
@@ -16,10 +15,20 @@ class StarBattle():
         self.islandConstructor()
 
     def randConstructor(self):
+        self.strc=np.eye(self.size,dtype=int)
         while not self.isValid(self.strc):
-            self.strc=np.random.permutation(self.strc)
+            print(self.strc)
+            self.strc=np.eye(self.size,dtype=int)
+            while not self.isValid(self.strc):
+                self.strc=np.random.permutation(self.strc)
+            temp=np.eye(self.size,dtype=int)
+            for i in range(1,self.stars):
+                while not self.isValid(temp):
+                        temp=np.random.permutation(temp)
+                self.strc=np.add(self.strc,temp)
     
     def detConstructor(self,cMet):
+        self.strc=np.eye(self.size,dtype=int)
         self.strc=self.strc[cMet]
         if not self.isValid(self.strc):
             pass
@@ -41,27 +50,15 @@ class StarBattle():
                             self.islands[x]=t
 
     def isValid(self,X):
-        for i in range(self.size):
-            for j in range(self.size):
-                if X[i,j]==1:
-                    for epi in (-1,0,1):
-                        for epj in (-1,0,1):
-                            if self.size-1>=i+epi>=0 and self.size-1>=epj+j>=0 and not (epi==epj and epi==0) and X[i+epi,j+epj]==1:
-                                #if X[i+epi,j+epj]==1:
+        for index in np.ndindex(np.shape(X)):
+            if X[index]==1:
+                for epi in (-1,0,1):
+                    for epj in (-1,0,1):
+                            if self.size-1>=index[0]+epi>=0 and self.size-1>=epj+index[1]>=0 and not (epi==epj and epi==0) and not X[index[0]+epi,index[1]+epj]==0:
                                 self.Valid = False
                                 return self.Valid
+            elif X[index]>1:
+                self.Valid = False
+                return self.Valid
         self.Valid = True
         return self.Valid
-
-
-import matplotlib.pyplot as plt
-
-x=StarBattle(12)
-print(x.islands)
-input()
-print(x.strc)
-
-plt.imshow(x.islands)
-plt.show()
-
-import tkinter as tk
