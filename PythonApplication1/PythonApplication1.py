@@ -62,15 +62,3 @@ class StarBattle():
                 return self.Valid
         self.Valid = True
         return self.Valid
-def test():
-    import matplotlib.pyplot as plt
-
-    x=StarBattle(20,starcount=2)
-    #print(x.islands)
-    #input()
-    print(x.strc)
-
-    plt.imshow(x.islands)
-    plt.show()
-
-test()
