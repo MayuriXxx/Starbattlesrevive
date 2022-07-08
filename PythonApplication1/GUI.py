@@ -4,12 +4,15 @@ from functools import partial
 
 
 class Board:
-    def __init__(self, X):
+    def __init__(self, state, stars, islands):
         self.root = Tk()
-        self.boardState = X
+        self.boardState = state
+        self.fields = islands
+        self.solution = stars
+        self.colors = ["red", "blue", "yellow", "green"]
 
-    def get_data(self, stars):
-        self.boardState = stars
+    def get_data(self, state, islands, stars):
+        self.boardState = state
 
     def update(self):
         pass
@@ -27,8 +30,12 @@ class Board:
         pixel = PhotoImage(width=1, height=1)
         for rows in range(len(self.boardState)):
             for cols in range(len(self.boardState[rows])):
-                setValue = partial(self.set, cols, rows)
-                Button(frm, text="", image=pixel, height=20, width=20, compound="c", command=setValue).grid(column=cols, row=rows)
+                set_value = partial(self.set, cols, rows)
+                text = int(self.solution[rows][cols])
+                Button(frm, text=text, image=pixel, height=20, width=20,
+                       compound="c", command=set_value,
+                       bg=self.colors[int(self.fields[rows][cols])])\
+                    .grid(column=cols, row=rows)
         self.root.mainloop()
 
 
