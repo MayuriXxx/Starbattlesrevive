@@ -67,7 +67,8 @@ class StarBattle:
         return self.Valid
 
 
-Star = StarConstructor(size=11, starcount=3)
-Star.isValid(Star.board)
+Star = StarConstructor(size=11, star_count=1)
+Star.construct_field()
+# Star.isValid(Star.board)
 # board = Board(np.zeros(np.array(Star.strc).shape), Star.strc, Star.islands)
 # board.show()
