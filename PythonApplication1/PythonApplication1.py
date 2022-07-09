@@ -1,16 +1,13 @@
 import numpy as np
 from itertools import permutations
 import random
-from GUI import Board
-from StarConstructor import StarConstructor
 
-
-class StarBattle:
-    def __init__(self, size, starcount=1, cMet='random'):
+class StarBattle():
+    def __init__(self,size,starcount=1,cMet='random'):
         self.stars=starcount
         self.size=size
         self.cMet=cMet
-        if self.cMet == 'random':
+        if self.cMet=='random':
             self.randConstructor()
         else:
             self.detConstructor(self.cMet)
@@ -65,10 +62,3 @@ class StarBattle:
                 return self.Valid
         self.Valid = True
         return self.Valid
-
-
-Star = StarConstructor(size=11, star_count=1)
-Star.construct_field()
-# Star.isValid(Star.board)
-# board = Board(np.zeros(np.array(Star.strc).shape), Star.strc, Star.islands)
-# board.show()

@@ -5,13 +5,14 @@
     <ProjectGuid>f3471bce-19cf-4aba-8f40-6f0feadea026</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>PythonApplication1.py</StartupFile>
+    <StartupFile>Starbattleclass.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>StarBattle</Name>
     <RootNamespace>PythonApplication1</RootNamespace>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,9 +22,6 @@
     <DebugSymbols>true</DebugSymbols>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="PythonApplication1.py" />
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
        Visual Studio and specify your pre- and post-build commands in
