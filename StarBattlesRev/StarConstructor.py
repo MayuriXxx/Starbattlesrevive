@@ -4,41 +4,74 @@ import itertools
 
 class StarConstructor:
     def __init__(self, size=10, star_count=1):
-        self.board = np.zeros((size, size))
-        self.islands = np.zeros((size, size))
-        self.strc = np.zeros((size, size))
+        self.size = size
+        self.star_positions = []
         self.star_count = star_count
         # all neighbour calculations except [0, 0]
         self.neighbours_calc = np.array([[i, j] for i, j in itertools.product(range(-1, 2), range(-1, 2)) if not(i==j==0)])
 
-    def construct_field(self):
-        stars = np.array([[1, 1]])
-        x = np.array([[0, 0, 0, 0, 0],
-                      [0, 1, 0, 0, 0],
-                      [0, 0, 0, 0, 0],
-                      [0, 0, 0, 1, 0],
-                      [0, 0, 0, 0, 0]])
+    def create_all_fields(self):
+        # loop through all columns, to get all possibilities
+        for column in range(0, self.size):
+            self.construct_field(np.array([]), np.array([0, column], dtype=np.uint8))
+        self.star_positions = np.unique(np.array(self.star_positions), axis=0)
+        return self.star_positions
+
+
+    def construct_field(self, star_coordinates, next_star):
+        '''
+            recursive function: create a recursive tree, where each 0 in the z matrix will be changed into a star.
+            The star is marked as a 1. and written down in the stars. matrix.
+            to limit the possibilities of the possible stars, each row and column and the neighbours, will be marked,
+            when a star is set. we will loop through the remaining zeros.
+        :return condition: if isValid == True. ==> append to the solution
+        '''
+        # get board from previous star
+        stars = list(star_coordinates)
+        stars.append(list(next_star))
+        stars = np.array(stars)
+        x = self.starposition_to_board(stars)
+        if self.isValid(x):
+            # print(f"\n{ '=' *10}[ HERE is a valid board ]{'=' * 10}\n{x}\n\n")
+            self.star_positions.append(stars)
+            return
+
+        # look for the next possible star, by calculating the conditions
         y = np.ones(x.shape)
         z1 = np.dot(x, y)
         z2 = np.dot(x.T, y).T
         z = z1 + z2
         for star in stars:
-            neighbours = np.array([star + elm for elm in self.neighbours_calc])
+            neighbours = np.array([star + elm for elm in self.neighbours_calc if self.size > (star+elm)[0] >= 0 and self.size > (star + elm)[1] >= 0])
             for neighbour in neighbours:
                 z[neighbour[0]][neighbour[1]] += 1
 
-        zeros = np.array(np.where(z == 0)).T
-        print(f"z: {z}\nget zeros: {1}")
+        zeros = np.array(np.where(z == 0), dtype=np.uint8).T        # possible stars
+        # print(f"z:\n{z}\nget zeros: {zeros}")
+
+        if len(zeros) == 0:
+            return
+
+        for possible_star in zeros:
+            self.construct_field(stars, next_star=possible_star)
+        return
+
+    def starposition_to_board(self, positions):
+        x = np.zeros((self.size, self.size), dtype=np.uint8)
+        for point in positions:
+            x[point[0]][point[1]] = 1
+        return x
 
     # ================================[ Validate the input or field, that is constructed ]=============================
     def isValid(self, State):
-        x = np.array([[0, 1, 0, 0],
+        '''x = np.array([[0, 1, 0, 0],
                       [0, 0, 0, 1],
                       [1, 0, 0, 0],
-                      [0, 0, 1, 0]])
-        print(f"first condition (each row and col can only have one star): {self.first_condition(x)}")
+                      [0, 0, 1, 0]])'''
+        x = np.array(State, dtype=np.uint8)
+        '''print(f"first condition (each row and col can only have one star): {self.first_condition(x)}")
         print(f"second condition (each star cannot be next to another one): {self.second_condition(x)}")
-        print(f"third condition (each field can only contain {self.star_count} of stars): {self.third_condition(x, x)}")
+        print(f"third condition (each field can only contain {self.star_count} of stars): {self.third_condition(x, x)}")'''
         if self.first_condition(x) and self.second_condition(x):
             return True
         return False
@@ -74,5 +107,11 @@ class StarConstructor:
     def third_condition(self, state, field):
         # Check if our island only contains the number of starts we want
         return True
+
+
+Star = StarConstructor(size=5)
+possibilites = Star.create_all_fields()
+print(possibilites.shape)
+
 
 
