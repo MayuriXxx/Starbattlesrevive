@@ -17,14 +17,15 @@ class StarConstructor:
         self.star_positions = np.unique(np.array(self.star_positions), axis=0)
         return self.star_positions
 
-
-    def construct_field(self, star_coordinates, next_star):
+    def construct_field(self, star_coordinates, next_star, row=1):
         '''
             recursive function: create a recursive tree, where each 0 in the z matrix will be changed into a star.
             The star is marked as a 1. and written down in the stars. matrix.
             to limit the possibilities of the possible stars, each row and column and the neighbours, will be marked,
             when a star is set. we will loop through the remaining zeros.
+            We will not loop through all zeros on the field, but the zero in the next row.
         :return condition: if isValid == True. ==> append to the solution
+                if no zeros in the next row anymore ==> return for next row
         '''
         # get board from previous star
         stars = list(star_coordinates)
@@ -32,7 +33,7 @@ class StarConstructor:
         stars = np.array(stars)
         x = self.starposition_to_board(stars)
         if self.isValid(x):
-            # print(f"\n{ '=' *10}[ HERE is a valid board ]{'=' * 10}\n{x}\n\n")
+            print(f"\n{ '=' *10}[ HERE is a valid board ]{'=' * 10}\n{x}\n\n")
             self.star_positions.append(stars)
             return
 
@@ -46,14 +47,20 @@ class StarConstructor:
             for neighbour in neighbours:
                 z[neighbour[0]][neighbour[1]] += 1
 
-        zeros = np.array(np.where(z == 0), dtype=np.uint8).T        # possible stars
+        zeros = np.array(np.where(z[row] == 0), dtype=np.uint8).T        # possible stars
         # print(f"z:\n{z}\nget zeros: {zeros}")
+        curr_row = np.full(
+                  shape=(zeros.shape[0], 1),
+                  fill_value=row,
+                  dtype=np.int
+                )
+        zeros = np.concatenate((curr_row, zeros), axis=1)       # only get the zeros, which is in the next row
 
         if len(zeros) == 0:
             return
 
         for possible_star in zeros:
-            self.construct_field(stars, next_star=possible_star)
+            self.construct_field(stars, next_star=possible_star, row=row+1)
         return
 
     def starposition_to_board(self, positions):
@@ -109,9 +116,9 @@ class StarConstructor:
         return True
 
 
-Star = StarConstructor(size=5)
+Star = StarConstructor(size=7)
+# Star.isValid(0)
 possibilites = Star.create_all_fields()
 print(possibilites.shape)
-
 
 
